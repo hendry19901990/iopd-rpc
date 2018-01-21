@@ -14,7 +14,7 @@ npm install iopd-rpc
 ## Examples
 
 ```javascript
-var run = function() {
+
   var iopcore = require('iopcore-lib');
   var RpcClient = require('iopd-rpc');
 
@@ -28,42 +28,26 @@ var run = function() {
 
   var rpc = new RpcClient(config);
 
-  var txids = [];
+  rpc.getPeerInfo(function(err, res) {
+	if (err)
+	  console.log(err);
+	else
+	  console.log(res.result);
+  });
 
-  function showNewTransactions() {
-    rpc.getRawMemPool(function (err, ret) {
-      if (err) {
-        console.error(err);
-        return setTimeout(showNewTransactions, 10000);
-      }
+  rpc.getBlockchainInfo(function(err, res) {
+	if (err)
+	  console.log(err);
+	else
+	  console.log(res.result);
+  });
 
-      function batchCall() {
-        ret.result.forEach(function (txid) {
-          if (txids.indexOf(txid) === -1) {
-            rpc.getRawTransaction(txid);
-          }
-        });
-      }
-
-      rpc.batch(batchCall, function(err, rawtxs) {
-        if (err) {
-          console.error(err);
-          return setTimeout(showNewTransactions, 10000);
-        }
-
-        rawtxs.map(function (rawtx) {
-          var tx = new iopcore.Transaction(rawtx.result);
-          console.log('\n\n\n' + tx.id + ':', tx.toObject());
-        });
-
-        txids = ret.result;
-        setTimeout(showNewTransactions, 2500);
-      });
-    });
-  }
-
-  showNewTransactions();
-};
+  rpc.listAccounts(1, function(err, res) {
+	if (err)
+	  console.log(err);
+	else
+	  console.log(res.result);
+  });
 ```
 
 ## License
